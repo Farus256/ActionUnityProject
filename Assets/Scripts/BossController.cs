@@ -127,7 +127,7 @@ public class BossController : MonoBehaviour
         anim.SetTrigger("isAttacking");
         attackCooldownTimer = attackCooldown;
 
-        if (Vector2.Distance(transform.position, playerTransform.position) <= attackRange)
+        if (Vector2.Distance(transform.position, playerTransform.position) <= attackRange && playerObj.rolling == false)
         {
             playerTransform.GetComponent<PlayerController>().TakeDamage(attackDamage, facingDirection);
         }

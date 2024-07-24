@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
     private Sensor_HeroKnight wallSensorL2;
     private bool isWallSliding = false;
     private bool grounded = false;
-    private bool rolling = false;
+    public bool rolling = false;
     private bool blocking = false;
     private int facingDirection = 1;
     private int nowFacingDirection = 1;
@@ -78,12 +78,6 @@ public class PlayerController : MonoBehaviour
         if (rolling)
             rollCurrentTime += Time.deltaTime;
 
-        if (rollCurrentTime > rollDuration)
-        {
-            rolling = false;
-
-        }
-
     }
 
     void CheckGroundStatus()
@@ -127,6 +121,9 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && !rolling && !isWallSliding && timeSinceRoll > 0.8f)
             StartCoroutine(Roll());
+
+        /*if(Input.GetKeyUp(KeyCode.LeftShift))
+            stopRoll();*/
 
         else if (Input.GetKeyDown("space") && grounded && !rolling)
             Jump();
@@ -237,7 +234,7 @@ public class PlayerController : MonoBehaviour
         Vector2 rollDirection = new Vector2(facingDirection, 0).normalized;
         Vector2 rollTarget = new Vector2(transform.position.x + rollDirection.x * rollDistance, transform.position.y);
 
-        float rollTime = 0.1f;
+        float rollTime = 0.5f;
         float elapsedTime = 0f;
 
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
@@ -249,10 +246,13 @@ public class PlayerController : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
         rolling = false;
         IgnoreEnemyCollisions(false);
         timeSinceRoll = 0.0f;
+    }
+    void stopRoll()
+    {
+        rolling = false;
     }
 
     void IgnoreEnemyCollisions(bool ignore)
@@ -270,7 +270,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(int damage, int facingDirectionEnemy)
     {
-        if (blocking && facingDirection != facingDirectionEnemy || rolling)
+        if (blocking || rolling)
         {
             if (blocking) { animator.SetTrigger("Block"); }
             return;
