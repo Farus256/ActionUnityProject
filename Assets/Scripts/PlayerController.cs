@@ -172,7 +172,7 @@ public class PlayerController : MonoBehaviour
         {
             if (enemy.CompareTag("Enemy"))
             {
-                enemy.GetComponent<BossController>().TakeDamage(attackDamage);
+                enemy.GetComponent<EnemyController>().TakeDamage(attackDamage);
             }
         }
 
@@ -234,7 +234,7 @@ public class PlayerController : MonoBehaviour
         Vector2 rollDirection = new Vector2(facingDirection, 0).normalized;
         Vector2 rollTarget = new Vector2(transform.position.x + rollDirection.x * rollDistance, transform.position.y);
 
-        float rollTime = 0.5f;
+        float rollTime = 0.1f;
         float elapsedTime = 0f;
 
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
@@ -270,7 +270,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(int damage, int facingDirectionEnemy)
     {
-        if (blocking || rolling)
+        if (blocking && facingDirectionEnemy != facingDirection|| rolling)
         {
             if (blocking) { animator.SetTrigger("Block"); }
             return;

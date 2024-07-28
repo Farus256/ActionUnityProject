@@ -8,4 +8,4 @@
 1. Fix Blocking (block only in way u look) - Done
 2. Fix the boss to have a health bar :(
 3. Add more patterns to boss (jump, block, combo, slide)
-4. Cooldown for roll
+4. Cooldown for roll - Done

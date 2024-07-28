@@ -187,7 +187,7 @@ public class PlayerControllerOLD : MonoBehaviour
             {
                 if (enemy.CompareTag("Enemy"))
                 {
-                    enemy.GetComponent<BossController>().TakeDamage(attackDamage);
+                    enemy.GetComponent<EnemyController>().TakeDamage(attackDamage);
                 }
             }
 
