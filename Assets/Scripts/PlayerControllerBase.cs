@@ -2,74 +2,73 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class RedKnightController : MonoBehaviour
+public abstract class PlayerControllerBase : MonoBehaviour
 {
-    [SerializeField] int currentHealth = 100;
-    [SerializeField] float speed = 4.0f;
-    [SerializeField] float attackRange = 1.5f;
-    [SerializeField] float jumpForce = 7.5f;
-    [SerializeField] float rollSpeed = 1.0f;
-    [SerializeField] float rollDuration = 0.5f;
-    [SerializeField] int attackDamage = 10;
-    [SerializeField] float rollForce = 10.0f;
-    [SerializeField] bool noBlood = false;
-    [SerializeField] GameObject slideDust;
-    [SerializeField] float rollDistance = 5f;
-    [SerializeField] GameObject playerCorpsePrefab;
+    protected int currentHealth;
+    protected float speed;
+    protected float attackRange;
+    protected float jumpForce;
+    protected float rollSpeed;
+    protected float rollDuration;
+    protected int attackDamage;
+    protected float rollForce;
+
+    protected Sensor_HeroKnight groundSensor;
+    protected GameObject slideDust;
+    protected float rollDistance;
+    protected GameObject playerCorpsePrefab;
 
     public bool mDied = false;
 
-    private Animator animator;
-    private Rigidbody2D body2d;
-    private Sensor_HeroKnight groundSensor;
+    protected Animator animator;
+    protected Rigidbody2D body2d;
 
-    private bool isWallSliding = false;
-    private bool grounded = false;
+    protected bool isWallSliding = false;
+    protected bool grounded = false;
     public bool rolling = false;
-    private bool blocking = false;
-    private int facingDirection = 1;
-    private int nowFacingDirection = 1;
-    private int currentAttack = 0;
-    private float timeSinceAttack = 0.0f;
-    private float timeSinceRoll = 0.0f;
-    private float delayToIdle = 0.0f;
-    private float rollCurrentTime;
+    protected bool blocking = false;
+    protected int facingDirection = 1;
+    protected int nowFacingDirection = 1;
+    protected int currentAttack = 0;
+    protected float timeSinceAttack = 0.0f;
+    protected float timeSinceRoll = 0.0f;
+    protected float delayToIdle = 0.0f;
+    protected float rollCurrentTime;
 
-    private Collider2D characterCollider;
-    private List<Collider2D> ignoredColliders = new List<Collider2D>();
+    protected Collider2D characterCollider;
+    protected List<Collider2D> ignoredColliders = new List<Collider2D>();
 
-    void Start()
+    protected virtual void Start()
     {
         InitializeComponents();
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if (mDied)
         {
-            if(Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.R))
             {
                 StartCoroutine(RestartPlayer());
             }
             return;
         }
+
         HandleTimers();
-        CheckGroundStatus();
+        //CheckGroundStatus();
         HandleInput();
         HandleAnimations();
     }
 
-    void InitializeComponents()
+    protected virtual void InitializeComponents()
     {
         animator = GetComponent<Animator>();
         body2d = GetComponent<Rigidbody2D>();
         characterCollider = GetComponent<Collider2D>();
-
-        groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
-
+        //groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
     }
 
-    void HandleTimers()
+    protected virtual void HandleTimers()
     {
         timeSinceAttack += Time.deltaTime;
         timeSinceRoll += Time.deltaTime;
@@ -78,22 +77,24 @@ public class RedKnightController : MonoBehaviour
             rollCurrentTime += Time.deltaTime;
     }
 
-    void CheckGroundStatus()
+    /*protected virtual void CheckGroundStatus()
     {
-        if (!grounded && groundSensor.State())
+        bool sensorState = groundSensor.State();
+
+        if (!grounded && sensorState)
         {
             grounded = true;
             animator.SetBool("Grounded", grounded);
         }
 
-        if (grounded && !groundSensor.State())
+        if (grounded && !sensorState)
         {
             grounded = false;
             animator.SetBool("Grounded", grounded);
         }
-    }
+    }*/
 
-    void HandleInput()
+    protected virtual void HandleInput()
     {
         float inputX = Input.GetAxis("Horizontal");
 
@@ -105,28 +106,26 @@ public class RedKnightController : MonoBehaviour
         if (Input.GetKeyDown("e") && !rolling)
             TriggerDeath();
 
-        else if (Input.GetKeyDown("q") && !rolling)
+        if (Input.GetKeyDown("q") && !rolling)
             TriggerHurt();
 
-        else if (Input.GetMouseButtonDown(0) && timeSinceAttack > 0.25f && !rolling)
+        if (Input.GetMouseButtonDown(0) && timeSinceAttack > 0.25f && !rolling)
             HandleAttack();
 
-        else if (Input.GetMouseButtonDown(1) && !rolling)
+        if (Input.GetMouseButtonDown(1) && !rolling)
             StartBlocking();
 
-        else if (Input.GetMouseButtonUp(1))
+        if (Input.GetMouseButtonUp(1))
             StopBlocking();
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && !rolling && !isWallSliding && timeSinceRoll > 0.8f)
             StartCoroutine(Roll());
 
-        else if (Input.GetKeyDown("space") && grounded && !rolling)
+        if (Input.GetKeyDown("space") && grounded && !rolling)
             Jump();
-
-
     }
 
-    void UpdateDirection(float inputX)
+    protected virtual void UpdateDirection(float inputX)
     {
         if (inputX > 0)
         {
@@ -140,18 +139,17 @@ public class RedKnightController : MonoBehaviour
         }
     }
 
-    void TriggerDeath()
+    protected virtual void TriggerDeath()
     {
-        animator.SetBool("noBlood", noBlood);
-        animator.SetTrigger("Death");
+        // Add death logic here
     }
 
-    void TriggerHurt()
+    protected virtual void TriggerHurt()
     {
         animator.SetTrigger("Hurt");
     }
 
-    void HandleAttack()
+    protected virtual void HandleAttack()
     {
         currentAttack++;
 
@@ -176,7 +174,7 @@ public class RedKnightController : MonoBehaviour
         timeSinceAttack = 0.0f;
     }
 
-    void StartBlocking()
+    protected virtual void StartBlocking()
     {
         blocking = true;
         nowFacingDirection = facingDirection;
@@ -184,13 +182,13 @@ public class RedKnightController : MonoBehaviour
         animator.SetBool("IdleBlock", true);
     }
 
-    void StopBlocking()
+    protected virtual void StopBlocking()
     {
         blocking = false;
         animator.SetBool("IdleBlock", false);
     }
 
-    void Jump()
+    protected virtual void Jump()
     {
         animator.SetTrigger("Jump");
         grounded = false;
@@ -199,12 +197,9 @@ public class RedKnightController : MonoBehaviour
         groundSensor.Disable(0.2f);
     }
 
-    void HandleAnimations()
+    protected virtual void HandleAnimations()
     {
         animator.SetFloat("AirSpeedY", body2d.velocity.y);
-
-
-        animator.SetBool("WallSlide", isWallSliding);
 
         float inputX = Input.GetAxis("Horizontal");
 
@@ -221,7 +216,7 @@ public class RedKnightController : MonoBehaviour
         }
     }
 
-    private IEnumerator Roll()
+    protected virtual IEnumerator Roll()
     {
         AE_SlideDust();
         animator.SetTrigger("Roll");
@@ -235,12 +230,10 @@ public class RedKnightController : MonoBehaviour
         float rollTime = 0.1f;
         float elapsedTime = 0f;
 
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-
         while (elapsedTime < rollTime)
         {
             Vector2 newPosition = Vector2.Lerp(transform.position, rollTarget, elapsedTime / rollTime);
-            rb.MovePosition(newPosition);
+            body2d.MovePosition(newPosition);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -249,12 +242,7 @@ public class RedKnightController : MonoBehaviour
         timeSinceRoll = 0.0f;
     }
 
-    void stopRoll()
-    {
-        rolling = false;
-    }
-
-    void IgnoreEnemyCollisions(bool ignore)
+    protected virtual void IgnoreEnemyCollisions(bool ignore)
     {
         Collider2D[] enemies = GameObject.FindObjectsOfType<Collider2D>();
 
@@ -267,33 +255,28 @@ public class RedKnightController : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int damage, int facingDirectionEnemy)
+    public virtual void TakeDamage(int damage, int facingDirectionEnemy)
     {
-        if (blocking && facingDirectionEnemy != facingDirection || rolling)
+        if ((blocking && facingDirectionEnemy != facingDirection) || rolling)
         {
             if (blocking) { animator.SetTrigger("Block"); }
             return;
         }
 
-        //animator.SetTrigger("Hurt");
-        Debug.Log("меня хуярят!");
+        animator.SetTrigger("Hurt");
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
-            noBlood = false;
-           // animator.SetBool("noBlood", noBlood);
-            animator.SetTrigger("Death");
-            gameObject.tag = "Untagged";
-            mDied = true;
+            // Add death logic here
         }
     }
 
-    public bool isDied()
+    public bool IsDied()
     {
         return mDied;
     }
 
-    void SpawnCorpse()
+    protected virtual void SpawnCorpse()
     {
         if (playerCorpsePrefab != null)
         {
@@ -301,38 +284,25 @@ public class RedKnightController : MonoBehaviour
         }
     }
 
-    IEnumerator RestartPlayer()
+    protected virtual IEnumerator RestartPlayer()
     {
-
         yield return new WaitForSeconds(0.05f);
-
         SpawnCorpse();
-        // Установить отрицательную скорость для реверсирования анимации
-
-
-        // Воспроизвести анимацию с реверсом
-        noBlood = true;
-        TriggerDeath();
-
 
         transform.position = Vector3.zero;
         currentHealth = 100;
         mDied = false;
         gameObject.tag = "Player";
-
-
     }
 
     // Animation Events
-    void AE_SlideDust()
+    protected virtual void AE_SlideDust()
     {
-        Vector3 spawnPosition = new Vector3(transform.position.x -1, transform.position.y, transform.position.z);
-
-
+        Vector3 spawnPosition = new Vector3(transform.position.x - 1, transform.position.y, transform.position.z);
 
         if (slideDust != null)
         {
-            GameObject dust = Instantiate(slideDust, spawnPosition, gameObject.transform.localRotation) as GameObject;
+            GameObject dust = Instantiate(slideDust, spawnPosition, gameObject.transform.localRotation);
             dust.transform.localScale = new Vector3(facingDirection, 1, 1);
         }
     }

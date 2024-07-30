@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool noBlood = false;
     [SerializeField] GameObject slideDust;
     [SerializeField] float rollDistance = 5f;
+    [SerializeField] GameObject playerCorpsePrefab;
 
     public bool mDied = false;
 
@@ -47,8 +48,12 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if(mDied)
+        if (mDied)
         {
+            if(Input.GetKeyDown(KeyCode.R))
+            {
+                StartCoroutine(RestartPlayer());
+            }
             return;
         }
         HandleTimers();
@@ -67,7 +72,7 @@ public class PlayerController : MonoBehaviour
         wallSensorR1 = transform.Find("WallSensor_R1").GetComponent<Sensor_HeroKnight>();
         wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
         wallSensorL1 = transform.Find("WallSensor_L1").GetComponent<Sensor_HeroKnight>();
-        wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();
+        wallSensorL2 = transform.Find("WallSensor_L1").GetComponent<Sensor_HeroKnight>();
     }
 
     void HandleTimers()
@@ -77,7 +82,6 @@ public class PlayerController : MonoBehaviour
 
         if (rolling)
             rollCurrentTime += Time.deltaTime;
-
     }
 
     void CheckGroundStatus()
@@ -122,11 +126,10 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift) && !rolling && !isWallSliding && timeSinceRoll > 0.8f)
             StartCoroutine(Roll());
 
-        /*if(Input.GetKeyUp(KeyCode.LeftShift))
-            stopRoll();*/
-
         else if (Input.GetKeyDown("space") && grounded && !rolling)
             Jump();
+
+
     }
 
     void UpdateDirection(float inputX)
@@ -226,6 +229,7 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator Roll()
     {
+        AE_SlideDust();
         animator.SetTrigger("Roll");
         rolling = true;
 
@@ -250,6 +254,7 @@ public class PlayerController : MonoBehaviour
         IgnoreEnemyCollisions(false);
         timeSinceRoll = 0.0f;
     }
+
     void stopRoll()
     {
         rolling = false;
@@ -270,7 +275,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(int damage, int facingDirectionEnemy)
     {
-        if (blocking && facingDirectionEnemy != facingDirection|| rolling)
+        if (blocking && facingDirectionEnemy != facingDirection || rolling)
         {
             if (blocking) { animator.SetTrigger("Block"); }
             return;
@@ -281,6 +286,8 @@ public class PlayerController : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
+            noBlood = false;
+            animator.SetBool("noBlood", noBlood);
             animator.SetTrigger("Death");
             gameObject.tag = "Untagged";
             mDied = true;
@@ -292,15 +299,45 @@ public class PlayerController : MonoBehaviour
         return mDied;
     }
 
+    void SpawnCorpse()
+    {
+        if (playerCorpsePrefab != null)
+        {
+            Instantiate(playerCorpsePrefab, transform.position, transform.rotation);
+        }
+    }
+
+    IEnumerator RestartPlayer()
+    {
+
+        yield return new WaitForSeconds(0.05f);
+
+        SpawnCorpse();
+        // Установить отрицательную скорость для реверсирования анимации
+
+
+        // Воспроизвести анимацию с реверсом
+        noBlood = true;
+        TriggerDeath();
+
+
+        transform.position = Vector3.zero;
+        currentHealth = 100;
+        mDied = false;
+        gameObject.tag = "Player";
+
+
+    }
+
     // Animation Events
     void AE_SlideDust()
     {
         Vector3 spawnPosition;
 
         if (facingDirection == 1)
-            spawnPosition = wallSensorR2.transform.position;
+            spawnPosition = wallSensorR1.transform.position;
         else
-            spawnPosition = wallSensorL2.transform.position;
+            spawnPosition = wallSensorL1.transform.position;
 
         if (slideDust != null)
         {

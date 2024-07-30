@@ -1,10 +1,10 @@
-19.07.2024 - 20.07.2024
+
 1. Fix Roll - Done
 2. Fix animation on boss to trigger mode - Done
 3. Fix the boss to have a health bar - None
 4. Add death animation to boss - Done
 
-21.07.2024 - 22.07.2024
+
 1. Fix Blocking (block only in way u look) - Done
 2. Fix the boss to have a health bar :(
 3. Add more patterns to boss (jump, block, combo, slide)

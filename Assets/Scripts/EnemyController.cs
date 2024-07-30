@@ -12,7 +12,7 @@ public class EnemyController : MonoBehaviour
 
     [SerializeField] public float dashDistance = 5f;
     [SerializeField] public float dashCooldown = 10f;
-    [SerializeField] public float jumpHeight = 5f;
+    [SerializeField] public float jumpHeight = 1.5f;
     [SerializeField] public float jumpCooldown = 6f;
     [SerializeField] public int specialAttackDamage = 20;
 
@@ -21,7 +21,7 @@ public class EnemyController : MonoBehaviour
     private int currentHealth;
     private float attackCooldownTimer = 0f;
     private float dashCooldownTimer = 0f;
-    private float jumpCooldownTimer = 20f;
+    private float jumpCooldownTimer = 10f;
     private Transform playerTransform;
     private Animator anim;
     private PlayerController playerObj;
@@ -66,10 +66,10 @@ public class EnemyController : MonoBehaviour
                 }
 
                 // Логика для прыжка
-                /*if (jumpCooldownTimer <= 0)
+                if (jumpCooldownTimer <= 0)
                 {
                     StartCoroutine(Jump());
-                }*/
+                }
             }
 
             if (attackCooldownTimer > 0)
@@ -163,28 +163,30 @@ public class EnemyController : MonoBehaviour
     private IEnumerator Jump()
     {
         isJumping = true;
-        //anim.SetBool("isJumping");
+        anim.SetTrigger("isJumping");
         jumpCooldownTimer = jumpCooldown;
 
-        Vector2 jumpTarget = new Vector2(transform.position.x, transform.position.y + jumpHeight);
-        float jumpTime = 0.5f; // Время выполнения прыжка
+        Vector2 jumpTarget = new Vector2(transform.position.x + dashDistance * facingDirection, transform.position.y + jumpHeight);
+        float jumpTime = 0.3f; // Время выполнения прыжка
         float elapsedTime = 0f;
 
         while (elapsedTime < jumpTime)
         {
             transform.position = Vector2.Lerp(transform.position, jumpTarget, elapsedTime / jumpTime);
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
+
         // Спуск вниз
         elapsedTime = 0f;
-        while (elapsedTime < jumpTime)
+        /*while (elapsedTime < jumpTime)
         {
             transform.position = Vector2.Lerp(jumpTarget, transform.position, elapsedTime / jumpTime);
             elapsedTime += Time.deltaTime;
             yield return null;
-        }
+        }*/
 
         isJumping = false;
     }
