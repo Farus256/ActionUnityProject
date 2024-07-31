@@ -30,10 +30,11 @@ public class LightKnightController : PlayerControllerBase
         base.InitializeComponents(); // Call the base class InitializeComponents method
 
         // Initialize additional components specific to LightKnight
-        /*wallSensorR1 = transform.Find("WallSensor_R1").GetComponent<Sensor_HeroKnight>();
+        groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
+        wallSensorR1 = transform.Find("WallSensor_R1").GetComponent<Sensor_HeroKnight>();
         wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
         wallSensorL1 = transform.Find("WallSensor_L1").GetComponent<Sensor_HeroKnight>();
-        wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();*/
+        wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();
     }
 
     protected override void Update()
@@ -41,6 +42,27 @@ public class LightKnightController : PlayerControllerBase
         base.Update(); // Call the base class Update method to handle common functionality
 
         // Add any specific update logic for LightKnight here
+    }
+
+    public override void TakeDamage(int damage, int facingDirectionEnemy)
+    {
+        if (blocking && facingDirectionEnemy != facingDirection || rolling)
+        {
+            if (blocking) { animator.SetTrigger("Block"); }
+            return;
+        }
+
+        animator.SetTrigger("Hurt");
+        Debug.Log("меня хуярят!");
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            noBlood = false;
+            animator.SetBool("noBlood", noBlood);
+            animator.SetTrigger("Death");
+            gameObject.tag = "Untagged";
+            mDied = true;
+        }
     }
 
     // Override other methods if you need specific behaviors for LightKnight

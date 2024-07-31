@@ -55,7 +55,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
         }
 
         HandleTimers();
-        //CheckGroundStatus();
+        CheckGroundStatus();
         HandleInput();
         HandleAnimations();
     }
@@ -65,7 +65,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
         animator = GetComponent<Animator>();
         body2d = GetComponent<Rigidbody2D>();
         characterCollider = GetComponent<Collider2D>();
-        //groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
+        groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
     }
 
     protected virtual void HandleTimers()
@@ -77,7 +77,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
             rollCurrentTime += Time.deltaTime;
     }
 
-    /*protected virtual void CheckGroundStatus()
+    protected virtual void CheckGroundStatus()
     {
         bool sensorState = groundSensor.State();
 
@@ -92,7 +92,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
             grounded = false;
             animator.SetBool("Grounded", grounded);
         }
-    }*/
+    }
 
     protected virtual void HandleInput()
     {
@@ -267,7 +267,9 @@ public abstract class PlayerControllerBase : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
-            // Add death logic here
+            animator.SetTrigger("Death");
+            gameObject.tag = "Untagged";
+            mDied = true;
         }
     }
 

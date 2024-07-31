@@ -24,7 +24,7 @@ public class EnemyController : MonoBehaviour
     private float jumpCooldownTimer = 10f;
     private Transform playerTransform;
     private Animator anim;
-    private PlayerController playerObj;
+    private PlayerControllerBase playerObj;
     private bool isAttacking = false;
     private bool isDashing = false;
     private bool isJumping = false;
@@ -32,7 +32,7 @@ public class EnemyController : MonoBehaviour
 
     void Start()
     {
-        playerObj = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        playerObj = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControllerBase>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         anim = GetComponent<Animator>();
         currentHealth = maxHealth;
@@ -129,7 +129,7 @@ public class EnemyController : MonoBehaviour
 
         if (Vector2.Distance(transform.position, playerTransform.position) <= attackRange && playerObj.rolling == false)
         {
-            playerTransform.GetComponent<PlayerController>().TakeDamage(attackDamage, facingDirection);
+            playerTransform.GetComponent<PlayerControllerBase>().TakeDamage(attackDamage, facingDirection);
         }
 
         yield return new WaitForSeconds(attackCooldown - 0.5f); // Оставшаяся часть времени отката атаки
