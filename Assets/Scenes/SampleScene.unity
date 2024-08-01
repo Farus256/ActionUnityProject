@@ -141,7 +141,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6323719953710832613, guid: a4b4a6d32bcb19248a754d6602ffc7e4, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8413529789942519730, guid: a4b4a6d32bcb19248a754d6602ffc7e4, type: 3}
       propertyPath: m_RootOrder
@@ -216,6 +216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1364d1908ae622d4ca78a231b62b71de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCorpsePrefab: {fileID: 0}
   mDied: 0
   rolling: 0
 --- !u!1 &64810189
@@ -2145,7 +2146,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &1327255930
 AudioListener:
   m_ObjectHideFlags: 0
@@ -3235,7 +3236,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3988044778823417530, guid: 9bb62c9c3b263c646a66056a1095b8da, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7659612543721959555, guid: 9bb62c9c3b263c646a66056a1095b8da, type: 3}
       propertyPath: m_RootOrder
@@ -3307,17 +3308,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26a095933dcfe4443a7d219028a18506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHealth: 100
-  speed: 4
-  attackRange: 1.5
-  jumpForce: 7.5
-  rollSpeed: 1
-  rollDuration: 0.5
-  attackDamage: 10
-  rollForce: 10
-  noBlood: 0
-  slideDust: {fileID: 0}
-  rollDistance: 5
   playerCorpsePrefab: {fileID: 0}
   mDied: 0
   rolling: 0

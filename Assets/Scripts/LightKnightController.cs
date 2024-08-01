@@ -37,13 +37,6 @@ public class LightKnightController : PlayerControllerBase
         wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();
     }
 
-    protected override void Update()
-    {
-        base.Update(); // Call the base class Update method to handle common functionality
-
-        // Add any specific update logic for LightKnight here
-    }
-
     public override void TakeDamage(int damage, int facingDirectionEnemy)
     {
         if (blocking && facingDirectionEnemy != facingDirection || rolling)
@@ -53,13 +46,13 @@ public class LightKnightController : PlayerControllerBase
         }
 
         animator.SetTrigger("Hurt");
-        Debug.Log("меня хуярят!");
+
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
             noBlood = false;
             animator.SetBool("noBlood", noBlood);
-            animator.SetTrigger("Death");
+            animator.SetBool("Death", true);
             gameObject.tag = "Untagged";
             mDied = true;
         }

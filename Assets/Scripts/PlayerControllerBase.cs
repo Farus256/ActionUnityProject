@@ -16,7 +16,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
     protected Sensor_HeroKnight groundSensor;
     protected GameObject slideDust;
     protected float rollDistance;
-    protected GameObject playerCorpsePrefab;
+    [SerializeField] protected GameObject playerCorpsePrefab;
 
     public bool mDied = false;
 
@@ -199,7 +199,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
 
     protected virtual void HandleAnimations()
     {
-        animator.SetFloat("AirSpeedY", body2d.velocity.y);
+        //animator.SetFloat("AirSpeedY", body2d.velocity.y);
 
         float inputX = Input.GetAxis("Horizontal");
 
@@ -262,12 +262,12 @@ public abstract class PlayerControllerBase : MonoBehaviour
             if (blocking) { animator.SetTrigger("Block"); }
             return;
         }
-
+        Debug.Log("Player is hit!");
         animator.SetTrigger("Hurt");
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
-            animator.SetTrigger("Death");
+            animator.SetBool("Death", true);
             gameObject.tag = "Untagged";
             mDied = true;
         }
