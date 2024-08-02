@@ -12,11 +12,10 @@ public abstract class PlayerControllerBase : MonoBehaviour
     protected float rollDuration;
     protected int attackDamage;
     protected float rollForce;
+    protected float rollDistance;
 
     protected Sensor_HeroKnight groundSensor;
-    protected GameObject slideDust;
-    protected float rollDistance;
-    [SerializeField] protected GameObject playerCorpsePrefab;
+
 
     public bool mDied = false;
 
@@ -38,6 +37,11 @@ public abstract class PlayerControllerBase : MonoBehaviour
     protected Collider2D characterCollider;
     protected List<Collider2D> ignoredColliders = new List<Collider2D>();
 
+    protected EffectController effectController;
+
+    protected Vector3 spawnPosition;
+
+    [SerializeField] protected GameObject playerCorpsePrefab;
     protected virtual void Start()
     {
         InitializeComponents();
@@ -66,6 +70,8 @@ public abstract class PlayerControllerBase : MonoBehaviour
         body2d = GetComponent<Rigidbody2D>();
         characterCollider = GetComponent<Collider2D>();
         groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
+        effectController = transform.Find("EffectController").GetComponent<EffectController>();
+
     }
 
     protected virtual void HandleTimers()
@@ -100,14 +106,8 @@ public abstract class PlayerControllerBase : MonoBehaviour
 
         UpdateDirection(inputX);
 
-        if (!rolling)
+        if (!rolling && !blocking)
             body2d.velocity = new Vector2(inputX * speed, body2d.velocity.y);
-
-        if (Input.GetKeyDown("e") && !rolling)
-            TriggerDeath();
-
-        if (Input.GetKeyDown("q") && !rolling)
-            TriggerHurt();
 
         if (Input.GetMouseButtonDown(0) && timeSinceAttack > 0.25f && !rolling)
             HandleAttack();
@@ -124,7 +124,21 @@ public abstract class PlayerControllerBase : MonoBehaviour
         if (Input.GetKeyDown("space") && grounded && !rolling)
             Jump();
     }
+    protected Vector3 getSpawnPosition(int flag)
+    {
+        if (flag == 1)
+        {
+            spawnPosition = new Vector3(transform.position.x - 1f * facingDirection, transform.position.y, transform.position.z);
+            return spawnPosition;
+        }
+        if(flag == 2)
+        {
+            spawnPosition = new Vector3(transform.position.x + 0.5f * facingDirection, transform.position.y + 0.3f, transform.position.z);
+            return spawnPosition;
+        }
 
+        return spawnPosition;
+    }
     protected virtual void UpdateDirection(float inputX)
     {
         if (inputX > 0)
@@ -139,18 +153,12 @@ public abstract class PlayerControllerBase : MonoBehaviour
         }
     }
 
-    protected virtual void TriggerDeath()
-    {
-        // Add death logic here
-    }
-
-    protected virtual void TriggerHurt()
-    {
-        animator.SetTrigger("Hurt");
-    }
-
     protected virtual void HandleAttack()
     {
+        if (blocking)
+        {
+            return;
+        }
         currentAttack++;
 
         if (currentAttack > 3)
@@ -199,13 +207,13 @@ public abstract class PlayerControllerBase : MonoBehaviour
 
     protected virtual void HandleAnimations()
     {
-        //animator.SetFloat("AirSpeedY", body2d.velocity.y);
+        animator.SetFloat("AirSpeedY", body2d.velocity.y);
 
         float inputX = Input.GetAxis("Horizontal");
 
         if (Mathf.Abs(inputX) > Mathf.Epsilon)
         {
-            delayToIdle = 0.05f;
+            delayToIdle = 0.01f;
             animator.SetInteger("AnimState", 1);
         }
         else
@@ -218,7 +226,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
 
     protected virtual IEnumerator Roll()
     {
-        AE_SlideDust();
+        effectController.doDust(facingDirection, getSpawnPosition(1));
         animator.SetTrigger("Roll");
         rolling = true;
 
@@ -259,7 +267,11 @@ public abstract class PlayerControllerBase : MonoBehaviour
     {
         if ((blocking && facingDirectionEnemy != facingDirection) || rolling)
         {
-            if (blocking) { animator.SetTrigger("Block"); }
+            if (blocking)
+            {
+                animator.SetTrigger("Block");
+                effectController.doBlockFlash(facingDirection,getSpawnPosition(2));
+            }
             return;
         }
         Debug.Log("Player is hit!");
@@ -278,7 +290,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
         return mDied;
     }
 
-    protected virtual void SpawnCorpse()
+    public void SpawnCorpse()
     {
         if (playerCorpsePrefab != null)
         {
@@ -297,15 +309,4 @@ public abstract class PlayerControllerBase : MonoBehaviour
         gameObject.tag = "Player";
     }
 
-    // Animation Events
-    protected virtual void AE_SlideDust()
-    {
-        Vector3 spawnPosition = new Vector3(transform.position.x - 1, transform.position.y, transform.position.z);
-
-        if (slideDust != null)
-        {
-            GameObject dust = Instantiate(slideDust, spawnPosition, gameObject.transform.localRotation);
-            dust.transform.localScale = new Vector3(facingDirection, 1, 1);
-        }
-    }
 }

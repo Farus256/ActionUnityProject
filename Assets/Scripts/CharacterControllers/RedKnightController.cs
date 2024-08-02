@@ -8,11 +8,11 @@ public class RedKnightController : PlayerControllerBase
     {
         // Initialize the specific stats for LightKnight
         currentHealth = 150;
-        speed = 5f;
+        speed = 4.5f;
         attackRange = 1.5f;
-        jumpForce = 7f;
-        rollSpeed = 8f;
-        rollDuration = 0.5f;
+        jumpForce = 5f;
+        rollSpeed = 5f;
+        rollDuration = 0.7f;
         attackDamage = 25;
         rollDistance = 5f;
 
