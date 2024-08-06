@@ -164,7 +164,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
         if (currentAttack > 3)
             currentAttack = 1;
 
-        if (timeSinceAttack > 1.0f)
+        if (timeSinceAttack > 0.7f)
             currentAttack = 1;
 
         animator.SetTrigger("Attack" + currentAttack);
@@ -175,7 +175,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
         {
             if (enemy.CompareTag("Enemy"))
             {
-                enemy.GetComponent<EnemyController>().TakeDamage(attackDamage);
+               // enemy.GetComponent<EnemyController>().TakeDamage(attackDamage);
             }
         }
 

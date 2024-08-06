@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7659612543721959555
 Transform:
   m_ObjectHideFlags: 0
@@ -197,7 +197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mDied: 0
   rolling: 0
-  playerCorpsePrefab: {fileID: 2286702315865027675, guid: de0afeb05d6bd784c8331c8ec83e44d7, type: 3}
+  playerCorpsePrefab: {fileID: 293583997982326642, guid: 7c0c588df80490945a48f09844c5474c, type: 3}
 --- !u!1 &7436395214299151911
 GameObject:
   m_ObjectHideFlags: 0

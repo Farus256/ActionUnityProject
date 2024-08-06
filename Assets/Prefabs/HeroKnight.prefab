@@ -294,7 +294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mDied: 0
   rolling: 0
-  playerCorpsePrefab: {fileID: 0}
+  playerCorpsePrefab: {fileID: 2286702315865027675, guid: de0afeb05d6bd784c8331c8ec83e44d7, type: 3}
 --- !u!1 &7087049454815086010
 GameObject:
   m_ObjectHideFlags: 0
